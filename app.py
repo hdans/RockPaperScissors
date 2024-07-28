@@ -15,20 +15,12 @@ def predict_image(image_path):
     img = load_img(image_path, target_size=(100, 150))
     x = img_to_array(img)
 
-    # Logging bentuk dan nilai gambar sebelum normalisasi
-    print("Shape before normalization:", x.shape)
-    print("Pixel values before normalization:", x[0][0])
-
     if x.shape[-1] != 3:
         x = np.stack((x,) * 3, axis=-1)
 
     x = x / 255.0  # Normalisasi gambar
     x = np.expand_dims(x, axis=0)
     images = np.vstack([x])
-
-    # Logging bentuk dan nilai gambar setelah normalisasi
-    print("Shape after normalization:", x.shape)
-    print("Pixel values after normalization:", x[0][0])
 
     classes = model.predict(images, batch_size=10)
     predicted_class_index = np.argmax(classes)
