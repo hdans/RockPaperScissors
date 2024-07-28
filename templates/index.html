@@ -10,26 +10,29 @@
             display: block;
             margin: auto;
         }
+        #video {
+            transform: scaleX(-1); /* This will mirror the video */
+        }
         #capture {
             margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Upload or Capture Photo for Prediction</h1>
+    <h1>Rock, Paper, Scissors Classification &copy;hdans</h1>
 
     <!-- File Upload Option -->
     <div>
-        <h2>Upload Gambar untuk Prediksi</h2>
+        <h2>Upload Image to Predict</h2>
         <form method="POST" action="/" enctype="multipart/form-data">
             <input type="file" name="file" accept="image/*">
             <button type="submit">Upload</button>
         </form>
     </div>
-
+    <h3>or</h3>
     <!-- Camera Capture Option -->
     <div>
-        <h2>Ambil Foto Menggunakan Kamera</h2>
+        <h2>Capture the Image Using Camera</h2>
         <video id="video" width="320" height="240" autoplay></video>
         <button id="capture">Capture Photo</button>
         <canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
@@ -61,7 +64,7 @@
                 console.error("Error accessing camera: " + err);
             });
 
-        captureButton.addEventListener('click', () => {
+        function capturePhoto() {
             const context = canvas.getContext('2d');
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
             canvas.toBlob(blob => {
@@ -71,7 +74,16 @@
                 fileInput.files = dataTransfer.files;
                 uploadForm.submit();
             }, 'image/png');
+        }
+
+        captureButton.addEventListener('click', capturePhoto);
+
+        document.addEventListener('keydown', (event) => {
+            if (event.code === 'Space') {
+                capturePhoto();
+            }
         });
     </script>
+
 </body>
 </html>

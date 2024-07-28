@@ -27,11 +27,11 @@ def predict_image(image_path):
     probability = np.max(classes) * 100
 
     if predicted_class_index == 0:
-        return "Ini Kertas", probability
+        return "Paper", probability
     elif predicted_class_index == 1:
-        return "Ini Batu", probability
+        return "Rock", probability
     else:
-        return "Ini Gunting", probability
+        return "Scissors", probability
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
