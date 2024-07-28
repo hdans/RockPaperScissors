@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        video, canvas {
+            display: block;
+            margin: auto;
+        }
+        #capture {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload or Capture Photo for Prediction</h1>
+
+    <!-- File Upload Option -->
+    <div>
+        <h2>Upload Gambar untuk Prediksi</h2>
+        <form method="POST" action="/" enctype="multipart/form-data">
+            <input type="file" name="file" accept="image/*">
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+
+    <!-- Camera Capture Option -->
+    <div>
+        <h2>Ambil Foto Menggunakan Kamera</h2>
+        <video id="video" width="320" height="240" autoplay></video>
+        <button id="capture">Capture Photo</button>
+        <canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
+
+        <form method="POST" action="/" enctype="multipart/form-data" id="uploadForm" style="display: none;">
+            <input type="file" name="file" id="fileInput">
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+
+    {% if prediction %}
+        <h2>Predicted Image is: {{ prediction }}</h2>
+        <h3>with probability: {{ probability }}%</h3>
+        <img src="{{ url_for('uploaded_file', filename=image_path) }}" alt="Uploaded Image" style="max-width: 400px;">
+    {% endif %}
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureButton = document.getElementById('capture');
+        const fileInput = document.getElementById('fileInput');
+        const uploadForm = document.getElementById('uploadForm');
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                console.error("Error accessing camera: " + err);
+            });
+
+        captureButton.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            canvas.toBlob(blob => {
+                const file = new File([blob], 'capture.png', { type: 'image/png' });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                fileInput.files = dataTransfer.files;
+                uploadForm.submit();
+            }, 'image/png');
+        });
+    </script>
+</body>
+</html>
